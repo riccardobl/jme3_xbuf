@@ -14,6 +14,7 @@ import com.jme3.animation.SkeletonControl;
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.joints.PhysicsJoint;
+import com.jme3.light.Light;
 import com.jme3.material.MatParam;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
@@ -38,19 +39,22 @@ public class UnitTests{
 	public boolean headless=true;
 	@Test
 	public void testNewMat(){
-		boolean headless=true;
+		boolean headless=false;
 		SimpleApplication app=TestHelpers.buildApp(headless);
 		
 		
 		TestHelpers.hijackUpdateThread(app);
-		XbufKey key=new XbufKey("unit_tests/xbuf/newmat/newmat2.xbuf");
-
+		XbufKey key=new XbufKey("unit_tests/xbuf/test_matnodes.xbuf");
+		key.useLightControls(true);
 
 		AtomicBoolean ok=new AtomicBoolean();
 		Spatial scene=app.getAssetManager().loadModel(key);
 		scene.depthFirstTraversal(s->{
 			if(s instanceof Geometry){
 				Geometry g=(Geometry)s;
+				try{
+					MikktspaceTangentGenerator.generate(g);
+				}catch(Exception e){}
 				Material mat=g.getMaterial();
 				for(MatParam p:mat.getParams()){
 					if(p.getName().equals("ColorMap"))ok.set(true);
@@ -59,9 +63,13 @@ public class UnitTests{
 		});
 		
 		assertTrue("ColorMap not found. Material is not loaded properly",ok.get());	
-
-		app.getRootNode().attachChild(scene);
+		for(Light l:app.getRootNode().getLocalLightList()){
+			System.out.println("Remove "+l);
+			app.getRootNode().removeLight(l);
+		}
 		
+		app.getRootNode().attachChild(scene);
+//		TangentBinormalGenerator.generate(app.getRootNode());
 		TestHelpers.releaseUpdateThread(app);
 		if(!headless)TestHelpers.waitFor(app);
 		TestHelpers.closeApp(app);
@@ -69,7 +77,7 @@ public class UnitTests{
 	
 	@Test
 	public void testTangents(){
-		boolean headless=true;
+//		boolean headless=false;
 		SimpleApplication app=TestHelpers.buildApp(headless);
 		
 		
@@ -131,7 +139,7 @@ public class UnitTests{
 		return f;
 	}
 
-	@Test
+//	@Test
 	public void testConstraints(){
 //		boolean headless=false;
 		SimpleApplication app=TestHelpers.buildApp(headless);
@@ -157,7 +165,7 @@ public class UnitTests{
 		TestHelpers.closeApp(app);
 	}
 	
-	@Test
+//	@Test
 	public void testMultiMat() {
 		SimpleApplication app=TestHelpers.buildApp(headless);
 		TestHelpers.hijackUpdateThread(app);
@@ -183,6 +191,8 @@ public class UnitTests{
 	
 	@Test
 	public void testHwSkinning() {
+		boolean headless=false;
+		
 		SimpleApplication app=TestHelpers.buildApp(headless);
 		TestHelpers.hijackUpdateThread(app);
 		
@@ -237,7 +247,7 @@ public class UnitTests{
 
 	}
 
-	@Test
+//	@Test
 	public void testMeshSharing() {
 		SimpleApplication app=TestHelpers.buildApp(headless);
 		TestHelpers.hijackUpdateThread(app);
@@ -263,7 +273,7 @@ public class UnitTests{
 
 	
 	
-	@Test
+//	@Test
 	public void testMatSharing() {
 		SimpleApplication app=TestHelpers.buildApp(headless);
 		TestHelpers.hijackUpdateThread(app);

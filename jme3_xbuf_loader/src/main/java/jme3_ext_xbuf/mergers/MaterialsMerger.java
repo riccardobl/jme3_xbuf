@@ -3,6 +3,7 @@ package jme3_ext_xbuf.mergers;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 
@@ -86,7 +87,11 @@ public class MaterialsMerger implements Merger{
 					// If not found load from root
 					try{
 						tex=assetManager.loadTexture(t.getRpath());
-							
+						
+						// TODO: make an option for this in the model key
+						tex.setMagFilter(MagFilter.Bilinear);
+						tex.setMinFilter(MinFilter.Trilinear);
+						tex.setAnisotropicFilter(4);
 					}catch(AssetNotFoundException ex){
 						log.warn("failed to load texture:",t.getRpath(),ex);
 						tex=defaultTexture.clone();
@@ -133,19 +138,35 @@ public class MaterialsMerger implements Merger{
 					context.put("G~"+id+"~RenderBucket",p.getValue(),id);
 				}else if(p.hasValue()){
 					Double d=new Double(p.getValue());
-					MatParam param=mat.getParam(name);
-					
+					Collection<MatParam> params=mat.getMaterialDef().getMaterialParams();
+					MatParam param=null;
+					for(MatParam pr:params){
+						if(pr.getName().equals(name)){
+							param=pr;
+							break;
+						}
+					}
+					if(param==null){
+						log.warn("Parameter {}  is not available for material  {}. Skip.",name,m.getMatId());
+						StringBuilder sb=new StringBuilder();
+						sb.append("Available parameters:\n");
+						for(Entry<String,MatParam> e:mat.getParamsMap().entrySet()){
+							sb.append(e.getKey()).append(", ");
+						}
+						log.warn(sb.toString());
+						continue;
+					}
 					switch(param.getVarType()){
 						case Float:{
-							param.setValue(d.floatValue());
+							mat.setFloat(name,d.floatValue());
 							break;
 						}
 						case Int:{
-							param.setValue(d.intValue());
+							mat.setInt(name,d.intValue());
 							break;
 						}
 						case Boolean:{
-							param.setValue(d.intValue()==1);
+							mat.setBoolean(name,d.intValue()==1);
 							break;
 						}
 						default:

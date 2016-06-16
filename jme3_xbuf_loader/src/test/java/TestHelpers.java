@@ -9,6 +9,7 @@ import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
+import com.jme3.system.AppSettings;
 import com.jme3.system.JmeContext;
 
 import jme3_ext_xbuf.XbufLoader;
@@ -26,27 +27,33 @@ public class TestHelpers{
 	}
 	public static SimpleApplication buildApp(boolean headless){
 		SimpleApplication app=new SimpleApplication(){
+			
 			@Override
 			public void destroy(){
 				super.destroy();
 				run_tab.remove(this);
 			}
 			public void simpleInitApp() {
-				AmbientLight al=new AmbientLight();
-				al.setColor(ColorRGBA.White.mult(10f));
-				
-				rootNode.addLight(al);
-				
-				DirectionalLight dl=new DirectionalLight(new Vector3f(0f, -1f, 0),new ColorRGBA(.72f,.97f,1f,1f).mult(1.4f));
-				rootNode.addLight(dl);
-				dl=new DirectionalLight(new Vector3f(0f, 1f, 0),new ColorRGBA(.72f,.97f,1f,1f).mult(1.4f));
-				rootNode.addLight(dl);
+//				AmbientLight al=new AmbientLight();
+//				al.setColor(ColorRGBA.White.mult(10f));
+//				
+//				rootNode.addLight(al);
+//				
+//				DirectionalLight dl=new DirectionalLight(new Vector3f(0f, -1f, 0),new ColorRGBA(.72f,.97f,1f,1f).mult(1.4f));
+//				rootNode.addLight(dl);
+//				dl=new DirectionalLight(new Vector3f(0f, 1f, 0),new ColorRGBA(.72f,.97f,1f,1f).mult(1.4f));
+//				rootNode.addLight(dl);
 				
 				assetManager.registerLoader(XbufLoader.class,"xbuf");
 				flyCam.setMoveSpeed(200f);
+				flyCam.setDragToRotate(true);
 				run_tab.put(this,new Object());
 			}
 		};
+		AppSettings settings=new AppSettings(true);
+		settings.setSamples(4);
+		settings.setVSync(true);
+		app.setSettings(settings);
 		app.start(headless?JmeContext.Type.Headless:JmeContext.Type.Display);
 		while(run_tab.get(app)==null){
 			try{

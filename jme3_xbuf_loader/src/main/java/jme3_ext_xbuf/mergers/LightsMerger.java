@@ -31,7 +31,7 @@ public class LightsMerger implements Merger{
 			}
 
 			if(srcl.hasColor()){
-				light.setColor(srcl.getColor().toJME().mult(srcl.getIntensity()));
+				light.setColor(srcl.getColor().toJME().mult(srcl.getIntensity()/4f)); // Try to make the light behave like in blender.
 			}
 
 			// TODO manage attenuation
@@ -118,7 +118,7 @@ public class LightsMerger implements Merger{
 				l0=new PointLight();
 				break;
 		}
-		l0.setColor(ColorRGBA.White.mult(2));
+		l0.setColor(ColorRGBA.White);
 		l0.setName(srcl.hasName()?srcl.getName():srcl.getId());
 		return l0;
 	}
