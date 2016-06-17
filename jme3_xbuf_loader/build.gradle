@@ -15,9 +15,9 @@ def v_xbuf="0.8.2"
 def v_physicsloader="0.5"
 def g_physicsloader="com.github.riccardobl"
 if (DEV_MODE){
-	v_physicsloader="SNAPSHOT"
-	g_physicsloader="dev"
-	v_xbuf="0.8.0-2-g59d8b75-dirty"
+	//v_physicsloader="SNAPSHOT"
+	//g_physicsloader="dev"
+	v_xbuf="0.8.2-6-g174dfcb-dirty"
 }
 
 dependencies {
@@ -25,8 +25,9 @@ dependencies {
 	compile "${g_physicsloader}:jme3_physicsloader:${v_physicsloader}"
 	compileOnly "org.projectlombok:lombok:${v_lombok}"
 	compile "org.slf4j:slf4j-api:${v_slf4j}"
-	compile "org.xbuf:xbuf:${v_xbuf}"
-
+	//compile "org.xbuf:xbuf:${v_xbuf}"
+	compile 'com.github.riccardobl:xbuf:-SNAPSHOT'
+	
 	compile project(":jme3_xbuf_rt")
 
 	compileOnly "org.jmonkeyengine:jme3-core:${v_jme3}"
@@ -35,6 +36,7 @@ dependencies {
 	testCompile "org.jmonkeyengine:jme3-bullet:${v_jme3}"
 	testCompile "org.jmonkeyengine:jme3-bullet-native:${v_jme3}"
 	testCompile 'com.github.riccardobl:jme3-bullet-vhacd:-SNAPSHOT'
+	testCompile "org.jmonkeyengine:jme3-effects:${v_jme3}"
 
 	testCompile 'junit:junit:4.12'
 	testRuntime 'ch.qos.logback:logback-classic:1.1.2'
